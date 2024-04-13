@@ -28,7 +28,7 @@ Setup the following environment variables:
    
    Clone this repository to your local machine:
    ```bash
-   git clone [https://github.com/GrgrLmml/sentrylog]
+   git clone git@github.com:GrgrLmml/sentrylog.git
    cd sentrylog
    pip install -r requirements.txt
    python src/sentry.py
