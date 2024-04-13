@@ -1,0 +1,13 @@
+import os
+
+TEMPLATE_PATH = 'templates/'
+TEMPLATE = 'nginx.md'
+CHUNK_SIZE = 100
+CHUNK_OVERLAP = 10
+
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+# ANTHROPIC_MODEL = "claude-3-opus-20240229"
+ANTHROPIC_MODEL_ID = os.getenv("ANTHROPIC_MODEL_ID", "claude-3-haiku-20240307")
+
+SLACK_TOKEN = os.getenv("SLACK_TOKEN")
+SLACK_CHANNEL = os.getenv("SLACK_CHANNEL")

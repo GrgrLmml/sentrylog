@@ -1,0 +1,4 @@
+anthropic==0.25.1
+docker==7.0.0
+pydantic==2.7.0
+slack-sdk==3.27.1
