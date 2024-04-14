@@ -3,6 +3,9 @@
 ## Overview
 SentryLog is a Python-based application that taps directly into the logs of running Docker containers without requiring any modifications to the containers themselves. It's a real-time log monitoring tool designed to assist developers by reducing the effort needed to monitor logs and detect patterns that might otherwise go unnoticed.
 
+![SentryLog](resources/app.jpeg)
+
+
 The application leverages the latest advances in AI, with a connector currently implemented for Anthropic's Claude model. This AI-powered analysis provides an additional layer of insight into your container activities.
 
 The results of the AI analysis are logged to Slack, providing an easily accessible and real-time overview of what happens in your deployment. SentryLog is not intended to replace developers monitoring logs but rather to serve as a helpful tool that enhances the efficiency and effectiveness of log monitoring.
