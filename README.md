@@ -44,7 +44,7 @@ Setup the following environment variables:
    ```
 3. **Add the service to your `docker-compose.yml`**
     
-    Add the log watcher service to your existing `docker-compose.yml` file:
+    Add SentryLog to your existing `docker-compose.yml` file:
     ```yaml
     version: '3.8'
     services:
