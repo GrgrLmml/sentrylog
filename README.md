@@ -58,6 +58,24 @@ Setup the following environment variables:
             - SLACK_CHANNEL=your-slack-channel
          restart: always
     ```
+### Running SentryLog with a Custom Template
+To use a custom prompt template, mount a volume containing your template file when running the Docker container:
+
+```yaml
+volumes:
+  - ./path/to/your/template.md:/usr/src/app/templates/custom.md
+```
+Make sure to set the `TEMPLATE` environment variable to the name of your custom template file (e.g., `custom.md`).
+### Running SentryLog with a Custom Container Name
+By default, SentryLog monitors the logs of a container with a name containing 'nginx'. To monitor a different container, set the `CONTAINER_TO_WATCH` environment variable when running the Docker container:
+    
+```yaml
+environment:
+  - CONTAINER_TO_WATCH=your-container-name
+```
+Replace `your-container-name` with the name of the container you want to monitor. SentryLog will search for a container whose name contains the specified value.
+
+
 
 ## Usage
 Once SentryLog is running, it will start monitoring the logs. The AI analysis results will be logged to the specified Slack channel.

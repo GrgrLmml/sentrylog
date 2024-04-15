@@ -1,9 +1,10 @@
 import os
 
 TEMPLATE_PATH = 'templates/'
-TEMPLATE = 'nginx.md'
+TEMPLATE = os.getenv('TEMPLATE', 'nginx.md')
 CHUNK_SIZE = 100
 CHUNK_OVERLAP = 10
+CONTAINER_TO_WATCH = os.getenv('CONTAINER_TO_WATCH', 'nginx')
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 # ANTHROPIC_MODEL = "claude-3-opus-20240229"
