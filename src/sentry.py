@@ -3,7 +3,8 @@ import asyncio
 import docker
 from docker.errors import NotFound
 
-from config.config import CHUNK_OVERLAP, CHUNK_SIZE, TEMPLATE, TEMPLATE_PATH, SLACK_CHANNEL, SLACK_TOKEN
+from config.config import CHUNK_OVERLAP, CHUNK_SIZE, TEMPLATE, TEMPLATE_PATH, SLACK_CHANNEL, SLACK_TOKEN, \
+    CONTAINER_TO_WATCH
 from analyzer.models import Template, LogChunk
 from analyzer.anthropic_analyzer import analyze
 from handler.handlers import Slack, MessageSender
@@ -11,12 +12,13 @@ from handler.handlers import Slack, MessageSender
 client = docker.from_env()
 
 
-def find_nginx() -> str:
-    print("Listing all running containers:")
+def find_container(name: str) -> str:
+    print(f"Searching for a container with name containing '{name}'...")
     for container in client.containers.list():
-        if 'nginx' in container.name:
+        if name.lower() in container.name.lower():
+            print(f"Found container: {container.name}")
             return container.name
-    raise Exception("Nginx container not found.")
+    raise Exception(f"Container with name containing '{name}' not found.")
 
 
 def load_template() -> Template:
@@ -43,7 +45,7 @@ async def watch_container_logs(container_name: str, template: Template, sender: 
 
 
 async def main():
-    nginx = find_nginx()
+    nginx = find_container(CONTAINER_TO_WATCH)
     template = load_template()
     sender = Slack(SLACK_TOKEN, SLACK_CHANNEL)
     await watch_container_logs(nginx, template, sender)
