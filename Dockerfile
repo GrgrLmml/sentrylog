@@ -1,15 +1,12 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+FROM python:3.11-slim-bullseye
 
-# Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Install any needed packages specified in requirements.txt
+RUN pip install --upgrade pip
+
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your application
 COPY src/ .
 
-# Run watcher.py when the container launches
 CMD ["python", "./sentry.py"]
