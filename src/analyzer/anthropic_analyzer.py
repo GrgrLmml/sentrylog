@@ -1,9 +1,12 @@
+import json
+
 from analyzer.models import LogChunk, Template, Prompt
 from config.config import ANTHROPIC_API_KEY, ANTHROPIC_MODEL_ID
 
 import anthropic
 
 from handler.handlers import MessageSender
+from parser.parser import parse_llm_response
 
 client = anthropic.Anthropic(
     api_key=ANTHROPIC_API_KEY,
@@ -21,7 +24,7 @@ async def analyze(logs: LogChunk, template: Template, sender: MessageSender):
     prompt = create_prompt(logs, template)
     message = client.messages.create(
         model=ANTHROPIC_MODEL_ID,
-        max_tokens=1000,
+        max_tokens=4096,
         temperature=0,
         messages=[
             {
@@ -32,4 +35,6 @@ async def analyze(logs: LogChunk, template: Template, sender: MessageSender):
             }
         ]
     )
-    sender.post_message(message.content[0].text)
+    # sender.post_message(message.content[0].text)
+    pared_output = parse_llm_response(message.content[0].text)
+    sender.post_parsed_object(pared_output)
