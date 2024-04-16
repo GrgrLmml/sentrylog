@@ -37,4 +37,4 @@ async def analyze(logs: LogChunk, template: Template, sender: MessageSender):
     )
     # sender.post_message(message.content[0].text)
     pared_output = parse_llm_response(message.content[0].text)
-    sender.post_parsed_object(pared_output)
+    sender.post_parsed_object(pared_output, logs)
