@@ -4,6 +4,8 @@ from pydantic import BaseModel
 
 
 class LogChunk(BaseModel):
+    start_time: str
+    end_time: str
     lines: List[str]
 
 

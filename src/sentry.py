@@ -8,6 +8,7 @@ from config.config import CHUNK_OVERLAP, CHUNK_SIZE, TEMPLATE, TEMPLATE_PATH, SL
 from analyzer.models import Template, LogChunk
 from analyzer.anthropic_analyzer import analyze
 from handler.handlers import Slack, MessageSender
+from utils.prepocessing import log_chunk_preprocessor
 
 client = docker.from_env()
 
@@ -36,7 +37,8 @@ async def watch_container_logs(container_name: str, template: Template, sender: 
             log_lines.append(line.decode().strip())
 
             if len(log_lines) >= CHUNK_SIZE:
-                chunk = LogChunk(lines=log_lines[:CHUNK_SIZE])
+
+                chunk = log_chunk_preprocessor(log_lines[:CHUNK_SIZE])
                 await analyze(chunk, template, sender)
                 log_lines = log_lines[CHUNK_SIZE - CHUNK_OVERLAP:]  # Retain 'm' lines for overlap
 
