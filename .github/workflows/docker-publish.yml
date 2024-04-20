@@ -15,14 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the Docker image
+        run: docker-compose -f docker-compose.yml build sentry-log
+      - name: Install pytest and run tests
         run: |
-          docker-compose -f docker-compose.yml build sentry-log
-      - name: Install pytest
-        run: |
-          docker-compose -f docker-compose.yml run --rm sentry-log pip install pytest
-      - name: Run tests
-        run: |
-          docker-compose -f docker-compose.yml run --rm sentry-log pytest -vv /usr/src/app/
+          docker-compose -f docker-compose.yml run --rm sentry-log /bin/sh -c "pip install pytest && pytest -vv /usr/src/app/"
 
   build-and-push:
     needs: test
