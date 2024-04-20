@@ -1,4 +1,43 @@
 import os
+import logging
+from logging.config import dictConfig
+
+logging_config = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'formatter': 'standard',
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',  # Default is stderr
+        },
+        'file': {
+            'level': 'DEBUG',
+            'formatter': 'standard',
+            'class': 'logging.FileHandler',
+            'filename': 'app.log',
+            'mode': 'a',  # Append mode
+        },
+    },
+    'loggers': {
+        '': {  # root logger
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True
+        }
+    }
+}
+
+dictConfig(logging_config)
+
+logger = logging.getLogger(__name__)
+
 
 TEMPLATE_PATH = 'templates/'
 TEMPLATE = os.getenv('TEMPLATE', 'nginx.md')

@@ -1,7 +1,7 @@
 import json
 
 from analyzer.models import LogChunk, Template, Prompt
-from config.config import ANTHROPIC_API_KEY, ANTHROPIC_MODEL_ID
+from config.config import ANTHROPIC_API_KEY, ANTHROPIC_MODEL_ID, logger
 
 import anthropic
 
@@ -38,3 +38,4 @@ async def analyze(logs: LogChunk, template: Template, sender: MessageSender):
     # sender.post_message(message.content[0].text)
     pared_output = parse_llm_response(message.content[0].text)
     sender.post_parsed_object(pared_output, logs)
+    logger.info(f"Message sent to the user: {message.content[0].text}")

@@ -1,27 +1,50 @@
 import json
+import re
+from typing import Type
 
-from pydantic import ValidationError
+from pydantic import ValidationError, BaseModel
 
 from parser.models import ResponseItem, ResponseItems
 
 
 def parse_llm_response(text: str) -> ResponseItems:
     items = []
-    stack = []  # To track the position of nested curly braces
+
     errors = 0
+    start_index = None  # Start index of a JSON object
+
     for i, char in enumerate(text):
         if char == '{':
-            stack.append(i)
-        elif char == '}' and stack:
-            start_index = stack.pop()
-            if not stack:  # All braces are closed, this is a complete JSON object
+            if start_index is not None:
+                errors += 1
+            start_index = i
+        elif char == '}':
+            if start_index is not None:
+                substring = text[start_index:i + 1]
+                start_index = None  # Reset start index
                 try:
-                    substring = text[start_index:i + 1]
-                    obj = json.loads(substring)  # Parse the JSON string
-                    model_instance = ResponseItem(**obj)  # Validate against Pydantic model
-                    items.append(model_instance)
-                except (json.JSONDecodeError, ValidationError) as e:
-                    # raise Exception(f"Error parsing or validating JSON: {e}")
+                    item = parse_custom_json(substring)
+                    items.append(item)
+                except ValidationError as e:
                     errors += 1
+            else:
+                errors += 1
 
     return ResponseItems(items=items, parsing_errors=errors)
+
+
+def parse_custom_json(text: str) -> ResponseItem:
+    fields = "|".join(ResponseItem.__fields__.keys())
+    pattern = fr'(?:"({fields})"\s*:\s*"(.*?)(?:"(?=,\s*"(?:{fields})"\s*:)|"}}$))'
+
+    matches = re.finditer(pattern, text, re.DOTALL)
+
+    data = {}
+    for match in matches:
+        field, value = match.groups()
+        data[field] = value
+
+    try:
+        return ResponseItem(**data)
+    except ValidationError as e:
+        raise e
