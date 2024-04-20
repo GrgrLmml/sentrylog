@@ -17,17 +17,10 @@ logging_config = {
             'class': 'logging.StreamHandler',
             'stream': 'ext://sys.stdout',  # Default is stderr
         },
-        'file': {
-            'level': 'DEBUG',
-            'formatter': 'standard',
-            'class': 'logging.FileHandler',
-            'filename': 'app.log',
-            'mode': 'a',  # Append mode
-        },
     },
     'loggers': {
         '': {  # root logger
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True
         }
