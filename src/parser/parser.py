@@ -35,7 +35,7 @@ def parse_llm_response(text: str) -> ResponseItems:
 
 def parse_custom_json(text: str) -> ResponseItem:
     fields = "|".join(ResponseItem.__fields__.keys())
-    pattern = fr'(?:"({fields})"\s*:\s*"(.*?)(?:"(?=,\s*"(?:{fields})"\s*:)|"}}$))'
+    pattern = fr'(?:"({fields})"\s*:\s*"(.*?)(?:"(?=,\s*"(?:{fields})"\s*:)|"\s*}}$))'
 
     matches = re.finditer(pattern, text, re.DOTALL)
 
