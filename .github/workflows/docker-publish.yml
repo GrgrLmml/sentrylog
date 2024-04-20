@@ -10,23 +10,29 @@ env:
   DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
 jobs:
-  build-and-push:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Docker Buildx
-      run: |
-        docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_TOKEN
-        docker buildx create --name mybuilder --use
-        docker buildx inspect --bootstrap
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: |
+          docker-compose -f docker-compose.yml build sentry-log
+      - name: Install pytest
+        run: |
+          docker-compose -f docker-compose.yml run --rm sentry-log pip install pytest
+      - name: Run tests
+        run: |
+          docker-compose -f docker-compose.yml run --rm sentry-log pytest -vv /usr/src/app/
 
-    - name: Run tests
-      run: |
-        docker-compose -f docker-compose.yml up -d sentry-log
-        docker-compose -f docker-compose.yml exec -T sentry-log /usr/local/bin/pytest -vv /usr/src/app/
-
-    - name: Build and push Docker image
-      run: |
-        docker buildx build --platform linux/amd64,linux/arm64 -t grgrlmml/sentrylog:${GITHUB_REF#refs/tags/} -t grgrlmml/sentrylog:latest --push .
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+      - name: Build and push Docker image
+        run: |
+          docker buildx create --name mybuilder --use
+          docker buildx inspect --bootstrap
+          docker buildx build --platform linux/amd64,linux/arm64 -t grgrlmml/sentrylog:${GITHUB_REF#refs/tags/} -t grgrlmml/sentrylog:latest --push .
