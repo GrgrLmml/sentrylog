@@ -3,10 +3,13 @@ import asyncio
 import docker
 from docker.errors import NotFound
 
+from analyzer.analyzer import analyze
+from analyzer.anthropic_model import AnthropicModel
+from analyzer.groq_model import GroqModel
+from analyzer.llm_model import LLMModel
 from config.config import CHUNK_OVERLAP, CHUNK_SIZE, TEMPLATE, TEMPLATE_PATH, SLACK_CHANNEL, SLACK_TOKEN, \
     CONTAINER_TO_WATCH, logger
-from analyzer.models import Template, LogChunk
-from analyzer.anthropic_analyzer import analyze
+from analyzer.models import Template
 from handler.handlers import Slack, MessageSender
 from utils.prepocessing import log_chunk_preprocessor
 
@@ -28,7 +31,7 @@ def load_template() -> Template:
     return Template(name=TEMPLATE, template=content)
 
 
-async def watch_container_logs(container_name: str, template: Template, sender: MessageSender):
+async def watch_container_logs(container_name: str, template: Template, sender: MessageSender, model: LLMModel):
     try:
         container = client.containers.get(container_name)
         logger.info(f"Starting to watch logs from {container.name}...")
@@ -39,7 +42,7 @@ async def watch_container_logs(container_name: str, template: Template, sender: 
             if len(log_lines) >= CHUNK_SIZE:
 
                 chunk = log_chunk_preprocessor(log_lines[:CHUNK_SIZE])
-                await analyze(chunk, template, sender)
+                await analyze(chunk, template, sender, model)
                 log_lines = log_lines[CHUNK_SIZE - CHUNK_OVERLAP:]  # Retain 'm' lines for overlap
 
     except NotFound:
@@ -50,7 +53,8 @@ async def main():
     nginx = find_container(CONTAINER_TO_WATCH)
     template = load_template()
     sender = Slack(SLACK_TOKEN, SLACK_CHANNEL)
-    await watch_container_logs(nginx, template, sender)
+    model = GroqModel()
+    await watch_container_logs(nginx, template, sender, model)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 anthropic==0.25.1
 docker==7.0.0
+groq==0.5.0
 pandas==2.2.2
 pydantic==2.7.0
 slack-sdk==3.27.1

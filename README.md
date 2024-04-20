@@ -5,15 +5,14 @@ SentryLog is a Python-based application that taps directly into the logs of runn
 
 ![SentryLog](resources/app.jpeg)
 
-
-The application leverages the latest advances in AI, with a connector currently implemented for Anthropic's Claude model. This AI-powered analysis provides an additional layer of insight into your container activities.
+The application leverages the latest advances in AI, with connectors currently implemented for Anthropic and Groq. This AI-powered analysis provides an additional layer of insight into your container activities.
 
 The results of the AI analysis are logged to Slack, providing an easily accessible and real-time overview of what happens in your deployment. SentryLog is not intended to replace developers monitoring logs but rather to serve as a helpful tool that enhances the efficiency and effectiveness of log monitoring.
 
-SentryLog is in its early stages and currently monitors Nginx logs. Contributions to expand its capabilities are welcome. 
+SentryLog is in its early stages and currently monitors Nginx logs. Contributions to expand its capabilities are welcome.
 
 ## Requirements
-- Anthropic Claude API key (for AI analysis)
+- Anthropic Claude or Groq API key (for AI analysis)
 - Slack token for your organization (for logging results)
 - A deployment that runs nginx, otherwise you won't see any logs ;-)
 
@@ -21,8 +20,8 @@ SentryLog is in its early stages and currently monitors Nginx logs. Contribution
 
 ### Prerequisites
 Setup the following environment variables:
-- `ANTHROPIC_API_KEY`: Your Anthropic Claude
-- `ANTHROPIC_MODEL_ID`: The model you want to use for AI analysis (optional default: `claude-3-haiku-20240307`)
+- `ANTHROPIC_API_KEY` or `GROQ_API_KEY`: Your API key for AI analysis
+- `ANTHROPIC_MODEL_ID` or `GROQ_MODEL_ID`: The model ID for the AI analysis (default is `claude-3-haiku-20240307` for Anthropic and `mixtral-8x7b-32768` for Groq)
 - `SLACK_TOKEN`: Your Slack token
 - `SLACK_CHANNEL`: The Slack channel where you want to log the results
 
@@ -53,7 +52,10 @@ Setup the following environment variables:
          volumes:
             - /var/run/docker.sock:/var/run/docker.sock
          environment:
-            - ANTHROPIC_API_KEY=your-anthropic-api-key
+            - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+            - ANTHROPIC_MODEL_ID=${ANTHROPIC_MODEL_ID}
+            - GROQ_API_KEY=${GROQ_API_KEY}
+            - GROQ_MODEL_ID=${GROQ_MODEL_ID}
             - SLACK_TOKEN=your-slack-token
             - SLACK_CHANNEL=your-slack-channel
          restart: always
@@ -74,7 +76,6 @@ environment:
   - CONTAINER_TO_WATCH=your-container-name
 ```
 Replace `your-container-name` with the name of the container you want to monitor. SentryLog will search for a container whose name contains the specified value.
-
 
 
 ## Usage

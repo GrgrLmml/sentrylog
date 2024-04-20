@@ -17,17 +17,10 @@ logging_config = {
             'class': 'logging.StreamHandler',
             'stream': 'ext://sys.stdout',  # Default is stderr
         },
-        'file': {
-            'level': 'DEBUG',
-            'formatter': 'standard',
-            'class': 'logging.FileHandler',
-            'filename': 'app.log',
-            'mode': 'a',  # Append mode
-        },
     },
     'loggers': {
         '': {  # root logger
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True
         }
@@ -46,8 +39,10 @@ CHUNK_OVERLAP = 10
 CONTAINER_TO_WATCH = os.getenv('CONTAINER_TO_WATCH', 'nginx')
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-# ANTHROPIC_MODEL = "claude-3-opus-20240229"
 ANTHROPIC_MODEL_ID = os.getenv("ANTHROPIC_MODEL_ID", "claude-3-haiku-20240307")
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_MODEL_ID = os.getenv("GROQ_MODEL_ID", "mixtral-8x7b-32768")
 
 SLACK_TOKEN = os.getenv("SLACK_TOKEN")
 SLACK_CHANNEL = os.getenv("SLACK_CHANNEL")
