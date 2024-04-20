@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 import docker
 from docker.errors import NotFound
@@ -8,12 +9,28 @@ from analyzer.anthropic_model import AnthropicModel
 from analyzer.groq_model import GroqModel
 from analyzer.llm_model import LLMModel
 from config.config import CHUNK_OVERLAP, CHUNK_SIZE, TEMPLATE, TEMPLATE_PATH, SLACK_CHANNEL, SLACK_TOKEN, \
-    CONTAINER_TO_WATCH, logger
+    CONTAINER_TO_WATCH, logger, ModelType, MODEL_TO_USE
+
 from analyzer.models import Template
 from handler.handlers import Slack, MessageSender
 from utils.prepocessing import log_chunk_preprocessor
 
 client = docker.from_env()
+
+
+def create_model() -> LLMModel:
+    try:
+        model_type = ModelType(MODEL_TO_USE.lower())
+    except ValueError:
+        raise ValueError(
+            f"Invalid model type '{MODEL_TO_USE}'. Valid options are {', '.join([e.value for e in ModelType])}")
+
+    if model_type == ModelType.ANTHROPIC:
+        logger.info("Using Anthropic model...")
+        return AnthropicModel()
+    else:
+        logger.info("Using Groq model...")
+        return GroqModel()
 
 
 def find_container(name: str) -> str:
@@ -36,11 +53,10 @@ async def watch_container_logs(container_name: str, template: Template, sender: 
         container = client.containers.get(container_name)
         logger.info(f"Starting to watch logs from {container.name}...")
         log_lines = []
-        for line in container.logs(stream=True):
+        for line in container.logs(stream=True, since=int(time.time())):
             log_lines.append(line.decode().strip())
 
             if len(log_lines) >= CHUNK_SIZE:
-
                 chunk = log_chunk_preprocessor(log_lines[:CHUNK_SIZE])
                 await analyze(chunk, template, sender, model)
                 log_lines = log_lines[CHUNK_SIZE - CHUNK_OVERLAP:]  # Retain 'm' lines for overlap
@@ -53,7 +69,7 @@ async def main():
     nginx = find_container(CONTAINER_TO_WATCH)
     template = load_template()
     sender = Slack(SLACK_TOKEN, SLACK_CHANNEL)
-    model = GroqModel()
+    model = create_model()
     await watch_container_logs(nginx, template, sender, model)
 
 

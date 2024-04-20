@@ -19,3 +19,4 @@ services:
       - SLACK_CHANNEL=${SLACK_CHANNEL}
       - TEMPLATE=${TEMPLATE:-custom.md}
       - CONTAINER_TO_WATCH=nginx
+      - SENTRY_LOG_LEVEL=${SENTRY_LOG_LEVEL:-INFO}

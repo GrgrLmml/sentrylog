@@ -1,7 +1,5 @@
 import pytest
 
-from config.config import logger
-from parser.models import ResponseItems
 from parser.parser import parse_llm_response, parse_custom_json
 
 
@@ -57,10 +55,12 @@ def llm_output2():
 ]
     """
 
+
 def test_parse_llm_output(llm_output1):
     pared_output = parse_llm_response(llm_output1)
     assert len(pared_output.items) == 3
     assert pared_output.parsing_errors == 2
+
 
 def test_parse_llm_output2(llm_output2):
     pared_output = parse_llm_response(llm_output2)
