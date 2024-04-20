@@ -1,5 +1,6 @@
 from analyzer.llm_model import LLMModel
 from analyzer.models import LogChunk, Template
+
 from config.config import SentryLogLevel, SENTRY_LOG_LEVEL
 from handler.handlers import MessageSender
 from parser.models import ResponseItems

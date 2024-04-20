@@ -10,6 +10,7 @@ from analyzer.groq_model import GroqModel
 from analyzer.llm_model import LLMModel
 from config.config import CHUNK_OVERLAP, CHUNK_SIZE, TEMPLATE, TEMPLATE_PATH, SLACK_CHANNEL, SLACK_TOKEN, \
     CONTAINER_TO_WATCH, logger, ModelType, MODEL_TO_USE
+
 from analyzer.models import Template
 from handler.handlers import Slack, MessageSender
 from utils.prepocessing import log_chunk_preprocessor
