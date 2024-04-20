@@ -4,7 +4,7 @@ import docker
 from docker.errors import NotFound
 
 from config.config import CHUNK_OVERLAP, CHUNK_SIZE, TEMPLATE, TEMPLATE_PATH, SLACK_CHANNEL, SLACK_TOKEN, \
-    CONTAINER_TO_WATCH
+    CONTAINER_TO_WATCH, logger
 from analyzer.models import Template, LogChunk
 from analyzer.anthropic_analyzer import analyze
 from handler.handlers import Slack, MessageSender
@@ -14,10 +14,10 @@ client = docker.from_env()
 
 
 def find_container(name: str) -> str:
-    print(f"Searching for a container with name containing '{name}'...")
+    logger.info(f"Searching for a container with name containing '{name}'...")
     for container in client.containers.list():
         if name.lower() in container.name.lower():
-            print(f"Found container: {container.name}")
+            logger.info(f"Found container: {container.name}")
             return container.name
     raise Exception(f"Container with name containing '{name}' not found.")
 
@@ -31,7 +31,7 @@ def load_template() -> Template:
 async def watch_container_logs(container_name: str, template: Template, sender: MessageSender):
     try:
         container = client.containers.get(container_name)
-        print(f"Starting to watch logs from {container.name}...")
+        logger.info(f"Starting to watch logs from {container.name}...")
         log_lines = []
         for line in container.logs(stream=True):
             log_lines.append(line.decode().strip())
@@ -43,7 +43,7 @@ async def watch_container_logs(container_name: str, template: Template, sender: 
                 log_lines = log_lines[CHUNK_SIZE - CHUNK_OVERLAP:]  # Retain 'm' lines for overlap
 
     except NotFound:
-        print(f"Container {container_name} not found.")
+        raise Exception(f"Container with name '{container_name}' not found.")
 
 
 async def main():

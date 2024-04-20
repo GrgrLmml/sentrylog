@@ -23,4 +23,5 @@ For each identified attack, please format your response as proper json as follow
 {"category": "Info", "type": "Type of Attack", "origin": "Origin", "relevant_log: "The log line(s)", "recommendation": "Recommendation"}
 {"category": "Info", "type": "Type of Attack", "origin": "Origin", "relevant_log: "The log line(s)", "recommendation": "Recommendation"}
 {"category": "Info", "type": "Type of Attack", "origin": "Origin", "relevant_log: "The log line(s)", "recommendation": "Recommendation"}
-Only return the json, the json and only the json, nothing else! If I cannot parse it your response will be meaninless to me and I ignore it. Be a good AI!
+Be extra careful with the json format. If a log contains a double quote, escape it with a backslash. Understood?!
+Only return the json, the json and only the json, nothing else! If I cannot parse it your response will be meaningless to me and I ignore it. Be a good AI!
