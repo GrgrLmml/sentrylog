@@ -2,12 +2,13 @@ from analyzer.llm_model import LLMModel
 from analyzer.models import LogChunk, Template
 
 from config.config import SentryLogLevel, SENTRY_LOG_LEVEL
-from handler.handlers import MessageSender
+from connectors.connectors import Connector
+
 from parser.models import ResponseItems
 from parser.parser import parse_llm_response
 
 
-async def analyze(logs: LogChunk, template: Template, sender: MessageSender, model: LLMModel,
+async def analyze(logs: LogChunk, template: Template, sender: Connector, model: LLMModel,
                   min_level: SentryLogLevel = SENTRY_LOG_LEVEL) -> None:
     message = await model.run_chunk(logs, template)
     parsed_output = parse_llm_response(message)

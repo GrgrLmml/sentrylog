@@ -2,7 +2,7 @@ from groq import Groq
 
 from analyzer.llm_model import LLMModel
 from analyzer.models import LogChunk, Template
-from config.config import GROQ_MODEL_ID, logger
+from config.config import GROQ_MODEL_ID
 
 
 # client = Groq()
