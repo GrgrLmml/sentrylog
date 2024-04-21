@@ -7,7 +7,7 @@ from analyzer.models import LogChunk
 from parser.models import ResponseItems, SentryLogLevel
 
 
-class MessageSender(ABC):
+class Connector(ABC):
 
     @abstractmethod
     def post_message(self, message: str) -> None:
@@ -24,7 +24,7 @@ class MessageSender(ABC):
         pass
 
 
-class Slack(MessageSender):
+class SlackConnector(Connector):
     def __init__(self, token: str, channel: str):
         self.client = WebClient(token=token)
         self.channel = channel

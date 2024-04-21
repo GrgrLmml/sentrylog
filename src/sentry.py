@@ -12,7 +12,7 @@ from config.config import CHUNK_OVERLAP, CHUNK_SIZE, TEMPLATE, TEMPLATE_PATH, SL
     CONTAINER_TO_WATCH, logger, ModelType, MODEL_TO_USE
 
 from analyzer.models import Template
-from handler.handlers import Slack, MessageSender
+from connectors.connectors import SlackConnector, Connector
 from utils.prepocessing import log_chunk_preprocessor
 
 client = docker.from_env()
@@ -48,7 +48,7 @@ def load_template() -> Template:
     return Template(name=TEMPLATE, template=content)
 
 
-async def watch_container_logs(container_name: str, template: Template, sender: MessageSender, model: LLMModel):
+async def watch_container_logs(container_name: str, template: Template, sender: Connector, model: LLMModel):
     try:
         container = client.containers.get(container_name)
         logger.info(f"Starting to watch logs from {container.name}...")
@@ -68,7 +68,7 @@ async def watch_container_logs(container_name: str, template: Template, sender: 
 async def main():
     nginx = find_container(CONTAINER_TO_WATCH)
     template = load_template()
-    sender = Slack(SLACK_TOKEN, SLACK_CHANNEL)
+    sender = SlackConnector(SLACK_TOKEN, SLACK_CHANNEL)
     model = create_model()
     await watch_container_logs(nginx, template, sender, model)
 

@@ -2,12 +2,9 @@ import json
 
 from analyzer.llm_model import LLMModel
 from analyzer.models import LogChunk, Template, Prompt
-from config.config import ANTHROPIC_API_KEY, ANTHROPIC_MODEL_ID, logger
+from config.config import ANTHROPIC_MODEL_ID
 
 from anthropic import Anthropic
-
-from handler.handlers import MessageSender
-from parser.parser import parse_llm_response
 
 
 def create_prompt(logs: LogChunk, template: Template) -> Prompt:
